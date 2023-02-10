@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<flow name="travelontipappFlow" doc:id="a74d40c8-3a2a-4efd-9526-ee8984a7418c" >
+		<http:listener doc:name="Listener" doc:id="656102d3-d494-4f2c-90ea-cec31fc2eca9" config-ref="HTTP_Listener_config" path="${http.listener.path}"/>
+		<logger level="INFO" doc:name="Logger" doc:id="f6ac237f-5d61-4fcb-a4a2-96775b4011f6" />
+	</flow>
+</mule>
