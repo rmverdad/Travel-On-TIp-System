@@ -2,4 +2,11 @@ http:
   listener:
     host: "localhost"
     port: "9081"
-    path: "/getRoutes"
+    path: "/travelontip/{serviceType}"
+    
+sql:
+  host: "sql12.freesqldatabase.com"
+  port: "3306"
+  user: "sql12597378"
+  pass: "dyMNcGRjBu"
+  db: "sql12597378"

@@ -1,11 +1,61 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core"
-	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
-http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<sub-flow name="setVar" doc:id="087f5d8e-862e-4964-b06e-da602ed5a980" >
+		<set-variable value="#[attributes.headers.transactionId]" doc:name="transactionId" doc:id="4c0476e8-80e2-4bbe-aff8-3c817f5a1425" variableName="transactioId" />
+		<set-variable value="#[attributes.uriParams.serviceType]" doc:name="serviceType" doc:id="36a75f1a-83da-4473-abce-1648f133c5b7" variableName="serviceType" />
+	</sub-flow>
 	<flow name="travelontipappFlow" doc:id="a74d40c8-3a2a-4efd-9526-ee8984a7418c" >
-		<http:listener doc:name="Listener" doc:id="656102d3-d494-4f2c-90ea-cec31fc2eca9" config-ref="HTTP_Listener_config" path="${http.listener.path}"/>
-		<logger level="INFO" doc:name="Logger" doc:id="f6ac237f-5d61-4fcb-a4a2-96775b4011f6" />
+		<http:listener doc:name="Listener" doc:id="656102d3-d494-4f2c-90ea-cec31fc2eca9" config-ref="HTTP_Listener_config" path="${http.listener.path}">
+			<http:response >
+				<http:headers ><![CDATA[#[output application/json
+---
+{
+	transactionId: vars.transactionId
+}]]]></http:headers>
+			</http:response>
+			<http:error-response statusCode="#[vars.statusCode]" >
+				<http:body ><![CDATA[#[vars.errorMsg default "Critical Error"]]]></http:body>
+			</http:error-response>
+		</http:listener>
+		<logger level="INFO" doc:name="Logger" doc:id="f6ac237f-5d61-4fcb-a4a2-96775b4011f6" message="Request Recieved For TransactionID: #[attributes.headers.transactionId]"/>
+		<flow-ref doc:name="set var" doc:id="467c0ccb-9225-4386-a387-e76528b96392" name="setVar" />
+		<choice doc:name="Choice" doc:id="fc6b54f5-05c8-48bb-9c4f-e6dd80b5291c" >
+			<when expression='#[vars.serviceType == "routes"]'>
+				<flow-ref doc:name="getRoutes" doc:id="09bcbeca-630a-44ee-a83e-ca8e86af2b41" name="TravelOnTip-GetRoutes"/>
+			</when>
+			<when expression='#[vars.serviceType == "schedules"]'>
+				<flow-ref doc:name="getSchedules" doc:id="658e40dd-33ac-46af-9e99-aa78aa4e8332" name="TravelOnTip-GetSchedules"/>
+			</when>
+			<otherwise >
+			<ee:transform doc:name="Transform Message" doc:id="2fab83f6-fa7e-4d77-a061-2020572e37a4" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+var message1 = "Please proivde correct" ++ (vars.serviceType as String) 
+var message2 = "You did not provide a URI Parameter"
+
+var text = if (isEmpty(vars.serviceType)) 
+	message1
+	else
+	message2
+---	
+text]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</otherwise>
+		</choice>
+		<logger level="INFO" doc:name="Logger" doc:id="4b792dd0-2e82-41b6-94ea-4ec19169e291" message="Response sent For TransactionID: #[attributes.headers.transactionId]"/>
+		<error-handler >
+			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="cf7dcc1e-7e1a-464c-82cb-55ba482e1856" >
+				<logger level="INFO" doc:name="Logger" doc:id="4d843ced-4c1a-425f-b296-cd97b062d0a1" message="Error occured  while requisting for #[vars.transactionId]. \nReason: #[error.errorMessage]\nType: #[error.errorType]"/>
+				<set-variable value="500" doc:name="statusCode" doc:id="aedd5ae6-94e1-4131-b7d0-36201c4f540c" variableName="statusCode" />
+				<set-variable value='#[message: "Error in TravelOnTip System"]' doc:name="errorMsg" doc:id="207dde2d-5a7f-4b50-a243-49c1c2c10979" variableName="errorMsg" />
+			</on-error-propagate>
+		</error-handler>
 	</flow>
 </mule>
