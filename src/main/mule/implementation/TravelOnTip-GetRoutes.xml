@@ -7,13 +7,13 @@ http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/cu
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
 	<sub-flow name="TravelOnTip-GetRoutes" doc:id="dee6bdb3-70e6-4e7d-a8fd-348a93698634" >
 		<db:select doc:name="Select" doc:id="21b0c6d6-b755-451e-825a-8c3b2b0106b9" config-ref="Database_Config">
-			<db:sql ><![CDATA[Select * from routes where companyName = :cname]]></db:sql>
+			<db:sql ><![CDATA[SELECT * FROM routes WHERE companyName = :cname]]></db:sql>
 			<db:input-parameters ><![CDATA[#[cname: "TravelOnTip"]]]></db:input-parameters>
 		</db:select>
 		<ee:transform doc:name="Transform Message" doc:id="18f02462-3f7e-4e23-82e4-4748d018936a" >
 			<ee:message >
 				<ee:set-payload ><![CDATA[%dw 2.0
-output application/java
+output application/json
 ---
 payload
 ]]></ee:set-payload>
