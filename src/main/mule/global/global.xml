@@ -10,6 +10,6 @@ http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/cu
 	</http:listener-config>
 	<configuration-properties doc:name="Configuration properties" doc:id="5ed8e90b-b855-4d25-8f36-e64599ae41de" file="config/${MULE_ENV}.yaml" />
 	<db:config name="Database_Config" doc:name="Database Config" doc:id="afb47b92-78e7-4c42-a222-0245a82a80b4" >
-		<db:my-sql-connection host="${sql.host}" port="${sql.port}" user="${sql.user}" password="${sql.pass}" database="${sql.db}" />
+		<db:my-sql-connection host="${sql.host}" port="${sql.port}" user="${sql.user}" database="${sql.db}" password="${sql.pass}"/>
 	</db:config>
 </mule>
