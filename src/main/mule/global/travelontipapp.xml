@@ -8,7 +8,8 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 	<sub-flow name="set_var" doc:id="d702e2c1-25f9-4e68-997f-0d9342d8854c" >
 		<set-variable value="#[message.attributes.headers.transactionId]" doc:name="transationId" doc:id="212fe2db-00b4-4b73-8bec-75268f2f286d" variableName="transactionId"/>
 		<set-variable value="#[message.attributes.uriParams.serviceType]" doc:name="serviceType" doc:id="fa2e19fe-8f60-4e12-a7d4-06a8934b7bb4" variableName="serviceType"/>
-	</sub-flow>
+	
+</sub-flow>
 	<flow name="travelontipapp_flow" doc:id="8fe155b3-5097-4780-84f3-7ed1dfa6511d" >
 		<http:listener doc:name="GET/travelontip" doc:id="371b6834-37d1-4ceb-9469-e3a1f74f979a" config-ref="HTTP_Listener_config" path="${http.listener.path}" allowedMethods="GET">
 			<http:response >
